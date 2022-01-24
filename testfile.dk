@@ -1,0 +1,2 @@
+(; This should normalize to cts.Univ cts.box ;)
+def test : (cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)).
