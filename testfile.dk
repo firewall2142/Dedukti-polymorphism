@@ -1,2 +1,52 @@
-(; This should normalize to cts.Univ cts.box ;)
-def test : (cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)).
+def leibniz :
+  cts.Term
+    cts.?_u0
+    (cts.prod
+       cts.?_u1
+       cts.?_u2
+       cts.?_u3
+       cts.?_u4
+       (cts.univ cts.?_u5 cts.?_u6 cts.?_u7)
+       (x =>
+        cts.cast
+          cts.?_u8
+          cts.?_u9
+          (cts.univ cts.?_u10 cts.?_u11 cts.?_u12)
+          (cts.univ cts.?_u13 cts.?_u14 cts.?_u15)
+          cts.?_u16
+          (cts.prod
+             cts.?_u17
+             cts.?_u18 
+             cts.?_u19 
+             cts.?_u20 
+             x
+             (x0 =>
+              cts.prod cts.?_u21 cts.?_u22 cts.?_u23 cts.?_u24 x (x1 => cts.univ cts.?_u25 cts.?_u26 cts.?_u27))))).
+
+
+(;
+def leibniz :
+  cts.Term
+    cts.diamond
+    (cts.prod
+       cts.triangle
+       cts.diamond
+       cts.diamond
+       cts.I
+       (cts.univ cts.box cts.triangle cts.I)
+       (x =>
+        cts.cast
+          cts.triangle
+          cts.sinf
+          (cts.univ cts.box cts.triangle cts.I)
+          (cts.univ cts.diamond cts.sinf cts.I)
+          cts.I
+          (cts.prod
+             cts.box
+             cts.box
+             cts.box
+             cts.I
+             x
+             (x0 =>
+              cts.prod cts.box cts.box cts.box cts.I x (x1 => cts.univ cts.star cts.box cts.I)))))
+;)

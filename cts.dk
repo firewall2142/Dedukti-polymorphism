@@ -106,3 +106,84 @@ def succ : Sort -> Sort.
 [a]     Rule a (enum uzero) a --> true.
 
 [a]     Cumul a a --> true.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(; var defs ;)
+
+def ?_t0 : Type.
+def ?_u0 : ?_t0.
+def ?_t1 : Type.
+def ?_u1 : ?_t1.
+def ?_t2 : Type.
+def ?_u2 : ?_t2.
+def ?_t3 : Type.
+def ?_u3 : ?_t3.
+def ?_t4 : Type.
+def ?_u4 : ?_t4.
+def ?_t5 : Type.
+def ?_u5 : ?_t5.
+def ?_t6 : Type.
+def ?_u6 : ?_t6.
+def ?_t7 : Type.
+def ?_u7 : ?_t7.
+def ?_t8 : Type.
+def ?_u8 : ?_t8.
+def ?_t9 : Type.
+def ?_u9 : ?_t9.
+def ?_t10 : Type.
+def ?_u10 : ?_t10.
+def ?_t11 : Type.
+def ?_u11 : ?_t11.
+def ?_t12 : Type.
+def ?_u12 : ?_t12.
+def ?_t13 : Type.
+def ?_u13 : ?_t13.
+def ?_t14 : Type.
+def ?_u14 : ?_t14.
+def ?_t15 : Type.
+def ?_u15 : ?_t15.
+def ?_t16 : Type.
+def ?_u16 : ?_t16.
+def ?_t17 : Type.
+def ?_u17 : ?_t17.
+def ?_t18 : Type.
+def ?_u18 : ?_t18.
+def ?_t19 : Type.
+def ?_u19 : ?_t19.
+def ?_t20 : Type.
+def ?_u20 : ?_t20.
+def ?_t21 : Type.
+def ?_u21 : ?_t21.
+def ?_t22 : Type.
+def ?_u22 : ?_t22.
+def ?_t23 : Type.
+def ?_u23 : ?_t23.
+def ?_t24 : Type.
+def ?_u24 : ?_t24.
+def ?_t25 : Type.
+def ?_u25 : ?_t25.
+def ?_t26 : Type.
+def ?_u26 : ?_t26.
+def ?_t27 : Type.
+def ?_u27 : ?_t27.
+
+
