@@ -16,9 +16,11 @@ module D = Dsu.Make (struct
     | DB (_,_,n) -> Hashtbl.hash n
     | Const (_,name) -> 
         begin
-          let _ = B.(string_of_mident (md name)) in
+          (* let _ = B.(string_of_mident (md name)) in *)
           let id = B.(string_of_ident  (id name)) in
-          Hashtbl.hash id
+          let res = Hashtbl.hash id in
+          (* Format.printf "Hash of %a = %d%!\n" T.pp_term t res; *)
+          res
         end
     | App (f, t1, ts) ->
         List.fold_left comb 0 @@

@@ -12,24 +12,26 @@ end
 
 module Make (E : Hashtbl.HashedType) = struct
 
+  module PH = Hashtbl.Make (E)
+
   type t = {
-    par : (E.t, E.t) Hashtbl.t;
-    rank : (E.t, int * int ) Hashtbl.t
+    par : E.t PH.t;
+    rank : (int*int) PH.t
   }
 
   type elt = E.t
 
   let empty () = 
-    {par = Hashtbl.create 100; rank = Hashtbl.create 100}
+    {par = PH.create 100; rank = PH.create 100}
 
   let rec repr dsu x =
-    match Hashtbl.find_opt dsu.par x with
+    match PH.find_opt dsu.par x with
     | None ->
-        Hashtbl.(replace dsu.par x x; replace dsu.rank x (1,1); x)
+        PH.(replace dsu.par x x; replace dsu.rank x (1,1); x)
     | Some y -> if not (E.equal x y) then repr dsu y else x
 
   let unite dsu x y =
-    let open Hashtbl in
+    let open PH in
     if E.equal x y then () else begin
       let x = repr dsu x in
       let y = repr dsu y in
@@ -45,9 +47,9 @@ module Make (E : Hashtbl.HashedType) = struct
     end
 
 
-  let mem dsu = Hashtbl.mem dsu.rank
+  let mem dsu = PH.mem dsu.rank
 
-  let eles dsu = Hashtbl.to_seq_keys dsu.rank
+  let eles dsu = PH.to_seq_keys dsu.rank
 
   let all_repr dsu =
     Seq.filter (fun x -> E.equal x (repr dsu x)) @@ eles dsu
@@ -55,12 +57,12 @@ module Make (E : Hashtbl.HashedType) = struct
   let set_rank dsu x r =
     let xp = repr dsu x in
     if E.equal x xp then () else begin
-      let rx = Hashtbl.find dsu.rank x in
-      let rxp = Hashtbl.find dsu.rank xp in
+      let rx = PH.find dsu.rank x in
+      let rxp = PH.find dsu.rank xp in
       let rxp' = (fst rxp, (snd rxp)-(snd rx)) in
-      Hashtbl.replace dsu.rank xp rxp';
-      Hashtbl.replace dsu.rank x (r, snd rx);
-      Hashtbl.replace dsu.par x x;
+      PH.replace dsu.rank xp rxp';
+      PH.replace dsu.rank x (r, snd rx);
+      PH.replace dsu.par x x;
       unite dsu xp x;
       assert (E.equal (repr dsu x) x);
       assert (E.equal (repr dsu xp) x)
