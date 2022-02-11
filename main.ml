@@ -25,31 +25,14 @@ module D = Dsu.Make (struct
   | Pi (_,_,a,b) -> comb (hash a) (hash b)
 end)
 
-
-
-let gen_term dsu te =
-  let rec aux t = let open T in
-    match t with
-    | Kind | Type _ | DB _ -> t
-    | Const _ -> if C.(is_var t) then D.repr dsu t else t
-    | App (f, t1, ts) ->
-        T.mk_App (aux f) (aux t1) (List.map aux ts)
-    | Lam (l,id,ty_opt,te) ->
-        let ty' = Option.bind ty_opt (fun x->Some (aux x)) in
-        T.mk_Lam l id ty' (aux te)
-    | Pi (l,id,a,b) -> T.mk_Pi l id (aux a) (aux b)
-  in
-  aux te
-
-
 let test env =
   let entry = List.hd @@ Parser.(parse @@ input_from_file "testfile.dk") in
-  C.global_cstr := {cstrs=[]};
-  let dsu = D.empty () in
   match entry with
   | Entry.Decl (_,_,_,_,t) ->
     begin
-      let sg = Env.get_signature env in
+      let t' = Poly.gen_poly env t in
+      Format.printf "%a\n" T.pp_term t';
+      (* let sg = Env.get_signature env in
       C.Typing.check sg [] t (T.mk_Type B.dloc);
       let cstrs = (!C.global_cstr).cstrs in
       let unite (l,r) =
@@ -77,7 +60,7 @@ let test env =
         tbl
       in
       let new_te = gen_term dsu t in
-      Format.printf "\nNew Term :\n%a\n" T.pp_term new_te
+      Format.printf "\nNew Term :\n%a\n" T.pp_term new_te *)
     end
   | _ -> failwith "unexpected entry"
 
