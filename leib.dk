@@ -1,4 +1,4 @@
-def leibniz
+def leibniz_p
   :=
   ?_u36:cts.Sort =>
   ?_u19:cts.Sort =>

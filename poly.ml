@@ -98,7 +98,6 @@ let gen_deplist dsu ulist =
     over the variables*)
 let quant_utlist te utlist use_pi =
   List.iter (fun (_,t) -> assert (not @@ V.is_var t)) utlist;
-  let utlist = List.rev utlist in
   let ulist = List.map fst @@ utlist in
   (* Add (u1 : t1) -> ... -> te *)
   let te = List.fold_left 
@@ -166,10 +165,15 @@ let gen_poly env use_pi te =
   (* Format.eprintf "ulist = %a\n" (pp_list T.pp_term) ulist; *)
   let deplist = gen_deplist dsu ulist in
   let var_order = Topo.sort deplist in
-  let utlist = List.map (fun i -> 
+  let utlist = List.rev_map (fun i -> 
     let mid = Vars.modid in
     V.(uvar_of_id mid i, repl_term dsu @@ tvar_of_id mid i))
     var_order
   in
-  quant_utlist te utlist use_pi
+  let args = List.rev_map (fun (u,_) -> 
+    Option.get @@ List.find_map 
+      (fun (var,value) -> if T.term_eq u var then Some value else None) 
+      !V.var_map) utlist 
+  in
+  (quant_utlist te utlist use_pi, args)
 
