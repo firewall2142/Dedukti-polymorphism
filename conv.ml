@@ -42,18 +42,34 @@ let uvar_of_tvar t = match t with
     T.mk_Const (B.dloc) name'
 | _ -> raise @@ Invalid_argument "expected a constant"
 
+let uvar_of_id mid i =
+  let id = B.mk_ident ("?_u"^(string_of_int i)) in
+  let name = B.mk_name mid id in
+  T.mk_Const (B.dloc) name
+
+let tvar_of_id mid i =
+  let id = B.mk_ident ("?_t"^(string_of_int i)) in
+  let name = B.mk_name mid id in
+  T.mk_Const (B.dloc) name
+
 let is_var t = is_uvar t || is_tvar t
 
-let id_of_var t = match t with
-  | T.Const (_, name) when is_var t ->
-      let s = B.(string_of_ident @@ id @@ name) in
-      let r = Str.regexp "[0-9]+" in
-      begin
-        try let _ = (Str.search_forward r s 0) in
-          int_of_string @@ Str.matched_string s
-        with Not_found -> failwith "not found id"
-      end
-  | _ -> raise @@ Invalid_argument "expected a Variable"
+let md_of_var x =
+  assert (is_var x); match x with
+  | T.Const (_, name) -> B.md name
+  | _ -> failwith "should not happen"
+
+let ident_of_var t = match t with
+| T.Const (_, name) when is_var t -> B.id @@ name
+| _ -> raise @@ Invalid_argument "expected a Variable"
+
+let id_of_var t =
+  let s = B.(string_of_ident @@ ident_of_var t) in
+  let r = Str.regexp "[0-9]+" in
+  try let _ = (Str.search_forward r s 0) in
+    int_of_string @@ Str.matched_string s
+  with Not_found -> failwith "not found id"
+
 
 module MakeRE (Conv : Kernel.Reduction.ConvChecker) : Kernel.Reduction.S =
 struct

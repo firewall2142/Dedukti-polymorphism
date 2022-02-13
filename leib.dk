@@ -1,0 +1,42 @@
+def leibniz :
+  ?_u3:cts.Sort ->
+  ?_u6:cts.Sort ->
+  ?_u13:cts.Sort ->
+  ?_u5:cts.Sort ->
+  ?_u11:cts.Sort ->
+  ?_u14:cts.Sort ->
+  ?_u19:cts.Sort ->
+  ?_u23:cts.Sort ->
+  ?_u26:cts.Sort ->
+  ?_u25:cts.Sort ->
+  ?_u27:(cts.eps (cts.Axiom ?_u25 ?_u26)) ->
+  ?_u24:(cts.eps (cts.Rule ?_u5 ?_u26 ?_u23)) ->
+  ?_u20:(cts.eps (cts.Rule ?_u5 ?_u23 ?_u19)) ->
+  ?_u15:(cts.eps (cts.Axiom ?_u13 ?_u14)) ->
+  ?_u12:(cts.eps (cts.Axiom ?_u19 ?_u11)) ->
+  ?_u7:(cts.eps (cts.Axiom ?_u5 ?_u6)) ->
+  ?_u4:(cts.eps (cts.Rule ?_u6 ?_u13 ?_u3)) ->
+  ?_u16:(cts.eps (cts.SubType ?_u11 ?_u14 (cts.univ ?_u19 ?_u11 ?_u12) (cts.univ ?_u13 ?_u14 ?_u15))) ->
+  cts.Term
+    ?_u3
+    (cts.prod
+       ?_u6
+       ?_u13
+       ?_u3
+       ?_u4
+       (cts.univ ?_u5 ?_u6 ?_u7)
+       (x =>
+        cts.cast
+          ?_u11
+          ?_u14
+          (cts.univ ?_u19 ?_u11 ?_u12)
+          (cts.univ ?_u13 ?_u14 ?_u15)
+          ?_u16
+          (cts.prod
+             ?_u5
+             ?_u23
+             ?_u19
+             ?_u20
+             x
+             (x0 => cts.prod ?_u5 ?_u26 ?_u23 ?_u24 x (x1 => cts.univ ?_u25 ?_u26 ?_u27))))).
+

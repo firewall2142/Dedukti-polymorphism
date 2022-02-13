@@ -4,6 +4,10 @@ module C = Conv
 module T = Kernel.Term
 module B = Kernel.Basic
 
+let curmid = ref (B.mk_mident "")
+
+module P = Pp.Make (struct let get_name () = !curmid end)
+
 let files = ["cts.dk"]
 
 module D = Dsu.Make (struct
@@ -26,41 +30,14 @@ module D = Dsu.Make (struct
 end)
 
 let test env =
+  curmid := B.mk_mident "testfile";
   let entry = List.hd @@ Parser.(parse @@ input_from_file "testfile.dk") in
   match entry with
-  | Entry.Decl (_,_,_,_,t) ->
+  | Entry.Decl (l,id,sc,st,t) ->
     begin
       let t' = Poly.gen_poly env t in
-      Format.printf "%a\n" T.pp_term t';
-      (* let sg = Env.get_signature env in
-      C.Typing.check sg [] t (T.mk_Type B.dloc);
-      let cstrs = (!C.global_cstr).cstrs in
-      let unite (l,r) =
-        Format.printf "%a ~~~ %a\n\n" T.pp_term l T.pp_term r;
-        D.unite dsu l r
-      in
-      List.iter unite cstrs;
-
-      (* Map containing [(v_repr, term)...] *)
-      let _ (*te_map*) =
-        let tbl = Hashtbl.create 100 in
-        let add2tbl (l, r) =
-          let add v te = 
-            let v = D.repr dsu v in
-            match Hashtbl.find_opt tbl v with
-            | None -> Hashtbl.replace tbl v te
-            | Some te' -> assert (T.term_eq te' te)
-          in
-          if (C.is_var l) && (C.is_var r) then ()
-          else if (C.is_var l) then add l r
-          else if (C.is_var r) then add r l
-          else assert (T.term_eq l r)
-        in
-        let _ = List.iter add2tbl cstrs in
-        tbl
-      in
-      let new_te = gen_term dsu t in
-      Format.printf "\nNew Term :\n%a\n" T.pp_term new_te *)
+      P.print_entry Format.std_formatter @@
+        Entry.Decl (l,id,sc,st,t')
     end
   | _ -> failwith "unexpected entry"
 
