@@ -27,7 +27,7 @@ module Make (E : Hashtbl.HashedType) = struct
   let rec repr dsu x =
     match PH.find_opt dsu.par x with
     | None ->
-        PH.(replace dsu.par x x; replace dsu.rank x (1,1); x)
+        PH.(replace dsu.par x x; replace dsu.rank x (0,1); x)
     | Some y -> if not (E.equal x y) then repr dsu y else x
 
   let unite dsu x y =
@@ -64,8 +64,8 @@ module Make (E : Hashtbl.HashedType) = struct
       PH.replace dsu.rank x (r, snd rx);
       PH.replace dsu.par x x;
       unite dsu xp x;
-      assert (E.equal (repr dsu x) x);
-      assert (E.equal (repr dsu xp) x)
+      (* assert (E.equal (repr dsu x) x);
+      assert (E.equal (repr dsu xp) x) *)
     end
 end
 

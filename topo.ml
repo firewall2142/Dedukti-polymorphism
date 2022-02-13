@@ -8,6 +8,8 @@ module type S = sig
   val sort : (t * t List.t) List.t -> t List.t
 end
 
+(** Thanks https://rosettacode.org/wiki/Topological_sort#OCaml !*)
+
 module Make (E : BT) : (S with type t=E.t) = struct 
   type t = E.t
   let clean depl =
@@ -25,7 +27,7 @@ module Make (E : BT) : (S with type t=E.t) = struct
 
   let get_deps x depl =
     try List.assoc x depl
-  with Not_found -> []
+  with Not_found -> failwith "Can't find deps"
 
   let sort = fun dep_list ->
     let dep_list = clean dep_list in

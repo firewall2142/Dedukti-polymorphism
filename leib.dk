@@ -1,42 +1,43 @@
-def leibniz :
-  ?_u3:cts.Sort ->
-  ?_u6:cts.Sort ->
-  ?_u13:cts.Sort ->
-  ?_u5:cts.Sort ->
-  ?_u11:cts.Sort ->
-  ?_u14:cts.Sort ->
-  ?_u19:cts.Sort ->
-  ?_u23:cts.Sort ->
-  ?_u26:cts.Sort ->
-  ?_u25:cts.Sort ->
-  ?_u27:(cts.eps (cts.Axiom ?_u25 ?_u26)) ->
-  ?_u24:(cts.eps (cts.Rule ?_u5 ?_u26 ?_u23)) ->
-  ?_u20:(cts.eps (cts.Rule ?_u5 ?_u23 ?_u19)) ->
-  ?_u15:(cts.eps (cts.Axiom ?_u13 ?_u14)) ->
-  ?_u12:(cts.eps (cts.Axiom ?_u19 ?_u11)) ->
-  ?_u7:(cts.eps (cts.Axiom ?_u5 ?_u6)) ->
-  ?_u4:(cts.eps (cts.Rule ?_u6 ?_u13 ?_u3)) ->
-  ?_u16:(cts.eps (cts.SubType ?_u11 ?_u14 (cts.univ ?_u19 ?_u11 ?_u12) (cts.univ ?_u13 ?_u14 ?_u15))) ->
-  cts.Term
+def leibniz
+  :=
+  ?_u36:cts.Sort =>
+  ?_u19:cts.Sort =>
+  ?_u32:cts.Sort =>
+  ?_u27:cts.Sort =>
+  ?_u30:cts.Sort =>
+  ?_u22:cts.Sort =>
+  ?_u17:cts.Sort =>
+  ?_u20:cts.Sort =>
+  ?_u5:cts.Sort =>
+  ?_u12:cts.Sort =>
+  ?_u2:cts.Sort =>
+  ?_u7:cts.Sort =>
+  ?_u9:cts.Sort =>
+  ?_u13:(cts.eps (cts.Rule ?_u9 ?_u9 ?_u12)) =>
+  ?_u8:(cts.eps (cts.Axiom ?_u9 ?_u7)) =>
+  ?_u6:(cts.eps (cts.Rule ?_u19 ?_u7 ?_u5)) =>
+  ?_u3:(cts.eps (cts.Rule ?_u5 ?_u12 ?_u2)) =>
+  ?_u21:(cts.eps (cts.Axiom ?_u22 ?_u20)) =>
+  ?_u18:(cts.eps (cts.Axiom ?_u19 ?_u17)) =>
+  ?_u31:(cts.eps (cts.Axiom ?_u32 ?_u30)) =>
+  ?_u28:(cts.eps (cts.Axiom ?_u19 ?_u27)) =>
+  ?_u37:(cts.eps (cts.Axiom ?_u19 ?_u36)) =>
+  ?_u33:(cts.eps
+           (cts.SubType ?_u27 ?_u30 (cts.univ ?_u19 ?_u27 ?_u28) (cts.univ ?_u32 ?_u30 ?_u31))) =>
+  ?_u23:(cts.eps
+           (cts.SubType ?_u17 ?_u20 (cts.univ ?_u19 ?_u17 ?_u18) (cts.univ ?_u22 ?_u20 ?_u21))) =>
+  A:(cts.Term ?_u36 (cts.univ ?_u19 ?_u36 ?_u37)) =>
+  x:(cts.Term
+       ?_u32
+       (cts.cast ?_u27 ?_u30 (cts.univ ?_u19 ?_u27 ?_u28) (cts.univ ?_u32 ?_u30 ?_u31) ?_u33 A)) =>
+  y:(cts.Term
+       ?_u22
+       (cts.cast ?_u17 ?_u20 (cts.univ ?_u19 ?_u17 ?_u18) (cts.univ ?_u22 ?_u20 ?_u21) ?_u23 A)) =>
+  cts.prod
+    ?_u5
+    ?_u12
+    ?_u2
     ?_u3
-    (cts.prod
-       ?_u6
-       ?_u13
-       ?_u3
-       ?_u4
-       (cts.univ ?_u5 ?_u6 ?_u7)
-       (x =>
-        cts.cast
-          ?_u11
-          ?_u14
-          (cts.univ ?_u19 ?_u11 ?_u12)
-          (cts.univ ?_u13 ?_u14 ?_u15)
-          ?_u16
-          (cts.prod
-             ?_u5
-             ?_u23
-             ?_u19
-             ?_u20
-             x
-             (x0 => cts.prod ?_u5 ?_u26 ?_u23 ?_u24 x (x1 => cts.univ ?_u25 ?_u26 ?_u27))))).
+    (cts.prod ?_u19 ?_u7 ?_u5 ?_u6 A (x0 => cts.univ ?_u9 ?_u7 ?_u8))
+    (x0 => cts.prod ?_u9 ?_u9 ?_u12 ?_u13 (x0 x) (x1 => x0 y)).
 

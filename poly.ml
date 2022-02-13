@@ -1,4 +1,5 @@
 module C = Conv
+module V = Vars
 module T = Kernel.Term
 module B = Kernel.Basic
 module Env = Api.Env
@@ -20,7 +21,6 @@ module D = Dsu.Make (struct
           (* let _ = B.(string_of_mident (md name)) in *)
           let id = B.(string_of_ident  (id name)) in
           let res = Hashtbl.hash id in
-          (* Format.printf "Hash of %a = %d%!\n" T.pp_term t res; *)
           res
         end
     | App (f, t1, ts) ->
@@ -30,29 +30,18 @@ module D = Dsu.Make (struct
     | Pi (_,_,a,b) -> comb (hash a) (hash b)
 end)
 
-
-let te_map dsu cstrs =
-        let tbl = Hashtbl.create 100 in
-        let add2tbl (l, r) =
-          let add v te = 
-            let v = D.repr dsu v in
-            match Hashtbl.find_opt tbl v with
-            | None -> Hashtbl.replace tbl v te
-            | Some te' -> assert (T.term_eq te' te)
-          in
-          if (C.is_var l) && (C.is_var r) then ()
-          else if (C.is_var l) then add l r
-          else if (C.is_var r) then add r l
-          else assert (T.term_eq l r)
-        in
-        let _ = List.iter add2tbl cstrs in
-        tbl
+let pp_list pp fmt l =
+  let rec aux fmt = function
+  | [] -> ()
+  | x :: tl -> Format.fprintf fmt " %a;" pp x; aux fmt tl
+  in
+  Format.fprintf fmt "[%a]" aux l
 
 (** Replace variables with their representative*)
 let repl_term dsu te =
   let rec aux t = let open T in
     match t with
-    | Const _ when C.(is_var t) -> 
+    | Const _ when V.(is_var t) -> 
         let r = D.repr dsu t in
         if term_eq r t then r else aux r
     | App (f, t1, ts) ->
@@ -67,56 +56,68 @@ let repl_term dsu te =
 
 (** Return DSU from [cstrs] *)
 let gen_dsu cstrs =
+  let get_rank t =
+    if V.is_var t then 0 else
+    if V.is_dbvar t then 200 else 100
+  in
   let dsu = D.empty () in
   List.iter (fun (x,y) -> 
     D.unite dsu x y;
-    if not (C.is_var x) then D.set_rank dsu x 100 else ();
-    if not (C.is_var y) then D.set_rank dsu y 100 else ())
+    if get_rank x > 0 then D.set_rank dsu x (get_rank x) else ();
+    if get_rank y > 0 then D.set_rank dsu y (get_rank y) else ())
   cstrs;
   dsu
 
 let rec deps te = let open T in
   match te with
-  | Const _ when C.is_var te -> [te]
+  | Const _ when V.is_var te -> [te]
   | App (f, t1, ts) ->
       (deps f) @ (deps t1) @ 
         (List.flatten @@ List.map deps ts)
-  | Lam (_,_,_,b) -> deps b
+  | Lam (_,_,tyopt,b) -> 
+      let l = Option.(value (map deps tyopt) ~default:[]) in
+      l @ (deps b)
   | Pi (_,_,a,b) -> (deps a) @ (deps b)
   | _ -> []
 
 (* Returns dependency list [(u, t)]*)
-let gen_deplist dsu utlist =
-  let deput (u,t) =
+let gen_deplist dsu ulist =
+  let depu u =
+    let t = repl_term dsu (V.tvar_of_uvar u) in
     List.filter_map (fun te -> 
         let te = D.repr dsu te in
-        if C.is_var te then Some (C.id_of_var te)
+        if V.is_var te then Some (V.id_of_var te)
         else None
       )
       ((deps u) @ (deps t))
   in
-  List.map (fun (u,t) -> (C.id_of_var u, deput (u,t))) utlist
+  List.map (fun u -> (V.id_of_var u, depu u)) ulist
 
-let quant_utlist te utlist =
-  List.iter (fun (_,t) -> assert (not @@ C.is_var t)) utlist;
+
+(** Generate a polymorphic form of the term with quantification
+    over the variables*)
+let quant_utlist te utlist use_pi =
+  List.iter (fun (_,t) -> assert (not @@ V.is_var t)) utlist;
   let utlist = List.rev utlist in
   let ulist = List.map fst @@ utlist in
   (* Add (u1 : t1) -> ... -> te *)
   let te = List.fold_left 
     (fun acc (u,t) ->
-      let ident = C.ident_of_var u in
-      assert (not @@ C.is_var t);
-      T.mk_Pi B.dloc ident t acc)
+      assert (not @@ V.is_var t);
+      if use_pi then T.mk_Pi B.dloc V.(ident_of_var u) t acc
+      else T.mk_Lam B.dloc V.(ident_of_var u) (Some t) acc)
     te utlist
   in
   let te =
     let open T in
     let n = List.length ulist in
     let rec aux d t = match t with
-    | Const _ when C.(is_var t) ->
-        let _ = assert (C.is_uvar t) in
-        T.mk_DB (B.dloc) (C.ident_of_var t) 
-          (d + (List.find_ind t ~eq:term_eq ulist))
+    | Const _ when V.(is_var t) ->
+        let _ = assert (V.is_uvar t) in
+        (* Format.eprintf "Finding : %a in [%a]\n" T.pp_term t (pp_list T.pp_term) ulist; *)
+        let ind = List.find_ind t ~eq:term_eq ulist in
+        T.mk_DB (B.dloc) (V.ident_of_var t) 
+          (d + ind)
     | App (f, t1, ts) ->
         T.mk_App (aux d f) (aux d t1) (List.map (aux d) ts)
     | Lam (l,id,ty_opt,te) ->
@@ -127,8 +128,16 @@ let quant_utlist te utlist =
     in
     aux (-n) te
   in
-  Format.eprintf "\n\n%a\n\n%!" T.pp_term te;
+  (* Format.eprintf "\n\n%a\n\n%!" T.pp_term te; *)
   te
+
+let add_lambdas utlist te =
+  let rec aux = function
+  | [] -> te
+  | (u,t) :: tl -> 
+    (T.mk_Lam B.dloc (V.ident_of_var u) (Some t) (aux tl))
+  in
+  aux utlist
 
 (* 
 gen_poly env te
@@ -142,34 +151,25 @@ generate dependencies of utlist i.e.
 topological sort the list w.r.t dependencies
 create quantification from the list
 *)
-let gen_poly env ty =
+let gen_poly env use_pi te =
   C.global_cstr := {cstrs=[]};
   let sg = Env.get_signature env in 
-  let _ = C.Typing.infer sg [] ty in
+  let _ = ignore (C.Typing.infer sg [] te) in
   let cstrs = (!C.global_cstr).cstrs in
-  List.iter (fun (l,r) -> Format.eprintf "%a ~~~ %a\n\n" T.pp_term l T.pp_term r) cstrs;
+  (* List.iter (fun (l,r) -> Format.eprintf "%a ~~~ %a\n\n" T.pp_term l T.pp_term r) cstrs; *)
   let dsu = gen_dsu cstrs in
-  let ty = repl_term dsu ty in (* Replace with parent in ty *)
-  let utlist = (* ut list is list of [(?_u, ?_t)] where [?_t] is replaced with its parent *)
-    List.filter_map (fun u -> 
-        match T.term_eq (D.repr dsu u) u with
-        | true -> Some (u, D.repr dsu (C.tvar_of_uvar u))
-        | false -> None)
-      (deps ty)
-  in
-  let mid = List.find_map (fun (u,t) ->
-    if C.is_var u then Some (C.md_of_var u) else
-    if C.is_var t then Some (C.md_of_var t) else
-    None) utlist in
-  let deplist = gen_deplist dsu utlist in
+  let te = repl_term dsu te in (* Replace with parent in te *)
+  (* ulist is list of representative ?_u variables *)
+  (* Format.eprintf "te = %a\n" T.pp_term te;
+  Format.eprintf "deps(te) = %a\n" (pp_list T.pp_term) (deps te); *)
+  let ulist = List.filter (fun u -> T.term_eq (D.repr dsu u) u) (deps te) in
+  (* Format.eprintf "ulist = %a\n" (pp_list T.pp_term) ulist; *)
+  let deplist = gen_deplist dsu ulist in
   let var_order = Topo.sort deplist in
   let utlist = List.map (fun i -> 
-    let mid = Option.get mid in
-    C.(uvar_of_id mid i, repl_term dsu @@ tvar_of_id mid i))
+    let mid = Vars.modid in
+    V.(uvar_of_id mid i, repl_term dsu @@ tvar_of_id mid i))
     var_order
   in
-  quant_utlist ty utlist
-
-(** Generate a polymorphic form of the term with quantification
-    over the variables*)
+  quant_utlist te utlist use_pi
 

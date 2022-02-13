@@ -1,5 +1,5 @@
 module T = Kernel.Term
-module B = Kernel.Basic
+module V = Vars
 
 type t = {
 (*  env : Api.Env.t;  (** The current environement used for type checking *)*)
@@ -10,66 +10,6 @@ type t = {
 
 (** [global_cstr] is a reference to the current type checking environment. *)
 let global_cstr : t ref = ref {cstrs=[]}
-let get = function
-| None -> failwith "Env not set"
-| Some env -> env
-
-let is_uvar : T.term -> bool = function
-| Const (_,name) ->
-  let reg = Str.regexp "\\?_u[0-9]+" in
-  Str.string_match reg B.(string_of_ident (id name)) 0
-| _ -> false
-
-let is_tvar : T.term -> bool = function
-| Const (_,name) ->
-  let reg = Str.regexp "\\?_t[0-9]+" in
-  Str.string_match reg B.(string_of_ident (id name)) 0
-| _ -> false
-
-let tvar_of_uvar t = match t with
-| T.Const (_, name) when is_uvar t -> 
-    let id' = Str.(replace_first (regexp "u") "t") 
-      B.(string_of_ident @@ id @@ name) in
-    let name' = B.(mk_name (md name) (mk_ident id')) in
-    T.mk_Const (B.dloc) name'
-| _ -> raise @@ Invalid_argument "expected a constant"
-
-let uvar_of_tvar t = match t with
-| T.Const (_, name) when is_tvar t -> 
-    let id' = Str.(replace_first (regexp "t") "u") 
-      B.(string_of_ident @@ id @@ name) in
-    let name' = B.(mk_name (md name) (mk_ident id')) in
-    T.mk_Const (B.dloc) name'
-| _ -> raise @@ Invalid_argument "expected a constant"
-
-let uvar_of_id mid i =
-  let id = B.mk_ident ("?_u"^(string_of_int i)) in
-  let name = B.mk_name mid id in
-  T.mk_Const (B.dloc) name
-
-let tvar_of_id mid i =
-  let id = B.mk_ident ("?_t"^(string_of_int i)) in
-  let name = B.mk_name mid id in
-  T.mk_Const (B.dloc) name
-
-let is_var t = is_uvar t || is_tvar t
-
-let md_of_var x =
-  assert (is_var x); match x with
-  | T.Const (_, name) -> B.md name
-  | _ -> failwith "should not happen"
-
-let ident_of_var t = match t with
-| T.Const (_, name) when is_var t -> B.id @@ name
-| _ -> raise @@ Invalid_argument "expected a Variable"
-
-let id_of_var t =
-  let s = B.(string_of_ident @@ ident_of_var t) in
-  let r = Str.regexp "[0-9]+" in
-  try let _ = (Str.search_forward r s 0) in
-    int_of_string @@ Str.matched_string s
-  with Not_found -> failwith "not found id"
-
 
 module MakeRE (Conv : Kernel.Reduction.ConvChecker) : Kernel.Reduction.S =
 struct
@@ -88,7 +28,7 @@ struct
     let open T in
     if term_eq l r then 
       true
-    else if (is_var r) || (is_var l) then
+    else if (V.is_var r) || (V.is_var l) then
       (add_cstr (l, r); true)
     else false
 
