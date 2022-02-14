@@ -153,13 +153,13 @@ def eq_rect_r :
                              cts.I
                              x
                              (x3:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))) =>
-                    cts.prod 
-		      cts.star 
-		      cts.star 
-		      cts.star 
-		      cts.I 
-		      (x3 x0) 
-		      (x4 : (cts.Term cts.star (x3 x0)) => x3 x1)))))))
+                    cts.prod
+                      cts.star
+                      cts.star
+                      cts.star
+                      cts.I
+                      (x3 x0)
+                      (x4:(cts.Term cts.star (x3 x0)) => x3 x1)))))))
   :=
   A:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
   a:(cts.Term
@@ -198,12 +198,23 @@ def eq_rect_r :
        cts.star
        cts.star
        cts.I
-       (cts.prod cts.box cts.box cts.box cts.I A 
-                 (x0 : (cts.Term cts.box A) => 
-		        cts.univ cts.star cts.box cts.I))
-       (x0 : (cts.Term cts.box (cts.prod cts.box cts.box cts.box cts.I A 
-                 (x0 : (cts.Term cts.box A) => 
-		        cts.univ cts.star cts.box cts.I))) => cts.prod cts.star cts.star cts.star cts.I (x0 __) (x1 => x0 x)))
+       (cts.prod
+          cts.box
+          cts.box
+          cts.box
+          cts.I
+          A
+          (x0:(cts.Term cts.box A) => cts.univ cts.star cts.box cts.I))
+       (x0:(cts.Term
+              cts.box
+              (cts.prod
+                 cts.box
+                 cts.box
+                 cts.box
+                 cts.I
+                 A
+                 (x0:(cts.Term cts.box A) => cts.univ cts.star cts.box cts.I))) =>
+        cts.prod cts.star cts.star cts.star cts.I (x0 __) (x1 : (cts.Term cts.star (x0 __)) => x0 x)))
     (P:(cts.Term
           cts.diamond
           (cts.cast
@@ -212,7 +223,7 @@ def eq_rect_r :
              (cts.univ cts.box cts.triangle cts.I)
              (cts.univ cts.diamond cts.sinf cts.I)
              cts.I
-             (cts.prod cts.box cts.box cts.box cts.I A (x0 => cts.univ cts.star cts.box cts.I)))) =>
+             (cts.prod cts.box cts.box cts.box cts.I A (x0 : (cts.Term cts.box A)=> cts.univ cts.star cts.box cts.I)))) =>
      auto:(cts.Term cts.star (P x)) => auto)
     a
     p.

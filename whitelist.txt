@@ -1,4 +1,2 @@
-leibniz
 eq
 eq_ind
-eq_rect_r
