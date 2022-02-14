@@ -42,6 +42,8 @@ struct
       else are_convertible_lst sg (R.conversion_step sg (l', r') lst)
 
   let are_convertible sg t1 t2 =
+    (* Format.eprintf "Checking convertiblility: %a ~~~ %a\n"
+      T.pp_term t1 T.pp_term t2; *)
     try are_convertible_lst sg [(t1, t2)]
     with Kernel.Reduction.Not_convertible -> false
 

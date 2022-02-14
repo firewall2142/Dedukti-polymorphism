@@ -87,7 +87,14 @@ let add_vars t =
   | App (f,a1,al) -> 
       T.mk_App (aux f) (aux a1) (List.map aux al)
   | Lam (l,id,topt,body) ->
-      T.mk_Lam l id (Option.map aux topt) (aux body)
+    begin
+      let t =
+        match topt with
+        | None -> (incr var_cnt; uvar_of_id modid !var_cnt)
+        | Some x -> (aux x)
+      in
+      T.mk_Lam l id (Some t) (aux body)
+    end
   | Pi (l,id,a,b) ->
       T.mk_Pi l id (aux a) (aux b)
   | Kind | Type _ | DB _ | Const _ -> t

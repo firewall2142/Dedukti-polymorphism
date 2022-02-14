@@ -15,6 +15,12 @@ let poly_file = ref "tests/testfile.dk"
 let rule_file = ref "/tmp/rules.dk"
 let cts_file = "theory/cts.dk"
 
+let set_debug_mode opts =
+  try Env.set_debug_mode opts
+  with Env.DebugFlagNotRecognized c ->
+    if c = 'a' then B.Debug.enable_flag Meta.debug_flag
+    else raise (Env.DebugFlagNotRecognized c)
+
 let run rule_fmt entry_fmt env =
   curmid := B.mk_mident (
     let _ = Str.(search_forward (regexp "[^/]*.dk$") !poly_file 0) in
@@ -36,9 +42,13 @@ let run rule_fmt entry_fmt env =
           | Entry.Def (l,id,sc,opq,Some ty,te) -> 
             (try Env.define env l id sc opq te (Some ty)
             with e -> 
-              Format.eprintf "Error while defining %a" P.print_entry en;
+              Format.eprintf "Error while defining\n%a" P.print_entry en;
               raise e)
-          | Entry.Decl (l,id',sc,st,t') -> Env.declare env l id' sc st t'
+          | Entry.Decl (l,id',sc,st,t') ->
+            (try Env.declare env l id' sc st t'
+            with e -> 
+              Format.eprintf "Error while defining %a" P.print_entry en;
+              raise e) 
           | _ -> failwith "shouldn't happen") 
         enlist)
     entries
@@ -53,7 +63,10 @@ let _ =
     ("-w", Arg.String (fun s -> 
         Procfile.(whitelist := (B.mk_ident s) :: !whitelist)), 
       "Whitelist identifier");
-    ("-m", Arg.Set_string rule_file, "Set meta file")
+    ("-m", Arg.Set_string rule_file, "Set meta file");
+    ( "-d",
+      Arg.String set_debug_mode,
+      " flags enables debugging for all given flags" );
   ] in
   Arg.parse speclist (fun s -> poly_file := s) usage_msg;
   let env = Env.init (Parser.input_from_file !poly_file) in

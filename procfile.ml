@@ -33,7 +33,7 @@ let rec preprocess te = let open T in match te with
 | Const _ ->
   Option.value ~default:te
     (List.find_map 
-      (fun (u,v) -> if T.term_eq te u then Some v else None) 
+      (fun (u,v) -> if T.term_eq te u then Some v else None)
     !te_map)
 | App (f, t1, ts) ->
     T.mk_App (preprocess f) (preprocess t1) 
@@ -53,6 +53,9 @@ let rec preprocess te = let open T in match te with
 let build_entry env rule_fmt entry =
   let newid = fun id -> B.mk_ident @@ (B.string_of_ident id)^"_p" in
   let mid = Env.get_name env in
+  (* Format.eprintf "TEMAP :\n";
+  List.iter (fun (u, v) -> Format.eprintf "%a --> %a" T.pp_term u T.pp_term v) !te_map;
+  Format.eprintf "\n%!"; *)
   match entry with
   | E.Def (l,id,sc,opq,_,te) ->
     let te = preprocess te in
@@ -78,9 +81,9 @@ let build_entry env rule_fmt entry =
     entries
   | E.Decl (l,id,sc,_,t) ->
     let st = Kernel.Signature.Definable T.Free in
+    let t = preprocess t in
     let entries = [E.Decl (l,id,sc,st,t)] in (* Initialize list with non polymorphic form of entry*)
     begin
-      let t = preprocess t in
       if List.exists (B.ident_eq id) !whitelist then 
         begin
           let t = Vars.add_vars t in

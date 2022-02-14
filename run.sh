@@ -2,6 +2,7 @@
 set -e
 
 files=$(dkdep -s --ignore ctslib/*.dk -I ctslib/)
+# files="ctslib/connectives.dk ctslib/logic.dk"
 whitelist=$(sed -e '/^[[:space:]]*$/d' -e 's/^/-w /' whitelist.txt)
 
 # for f in $(dkdep --ignore -s ctslib/*.dk); do dkcheck -e $f -I ./theory; done

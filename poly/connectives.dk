@@ -35,7 +35,8 @@ def Not :
           cts.box
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x => cts.univ cts.star cts.box cts.I))).
+          (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
+           cts.univ cts.star cts.box cts.I))).
 
 def And :
   cts.Term
@@ -52,14 +53,15 @@ def And :
           cts.box
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x =>
+          (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
            cts.prod
              cts.box
              cts.box
              cts.box
              cts.I
              (cts.univ cts.star cts.box cts.I)
-             (x0 => cts.univ cts.star cts.box cts.I)))).
+             (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
+              cts.univ cts.star cts.box cts.I)))).
 
 def Or :
   cts.Term
@@ -76,14 +78,15 @@ def Or :
           cts.box
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x =>
+          (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
            cts.prod
              cts.box
              cts.box
              cts.box
              cts.I
              (cts.univ cts.star cts.box cts.I)
-             (x0 => cts.univ cts.star cts.box cts.I)))).
+             (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
+              cts.univ cts.star cts.box cts.I)))).
 
 def ex :
   cts.Term
@@ -94,7 +97,7 @@ def ex :
        cts.diamond
        cts.I
        (cts.univ cts.box cts.triangle cts.I)
-       (x =>
+       (x:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
         cts.cast
           cts.triangle
           cts.sinf
@@ -106,8 +109,23 @@ def ex :
              cts.box
              cts.box
              cts.I
-             (cts.prod cts.box cts.box cts.box cts.I x (x0 => cts.univ cts.star cts.box cts.I))
-             (x0 => cts.univ cts.star cts.box cts.I)))).
+             (cts.prod
+                cts.box
+                cts.box
+                cts.box
+                cts.I
+                x
+                (x0:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))
+             (x0:(cts.Term
+                    cts.box
+                    (cts.prod
+                       cts.box
+                       cts.box
+                       cts.box
+                       cts.I
+                       x
+                       (x0:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))) =>
+              cts.univ cts.star cts.box cts.I)))).
 
 def equal :
   cts.Term
@@ -118,7 +136,7 @@ def equal :
        cts.diamond
        cts.I
        (cts.univ cts.box cts.triangle cts.I)
-       (x =>
+       (x:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
         cts.cast
           cts.triangle
           cts.sinf
@@ -131,8 +149,14 @@ def equal :
              cts.box
              cts.I
              x
-             (x0 =>
-              cts.prod cts.box cts.box cts.box cts.I x (x1 => cts.univ cts.star cts.box cts.I))))).
+             (x0:(cts.Term cts.box x) =>
+              cts.prod
+                cts.box
+                cts.box
+                cts.box
+                cts.I
+                x
+                (x1:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))))).
 
 def I : cts.Term cts.star True.
 
@@ -145,7 +169,8 @@ def falsity :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x => cts.prod cts.star cts.star cts.star cts.I False (x0 => x))).
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
+        cts.prod cts.star cts.star cts.star cts.I False (x0:(cts.Term cts.star False) => x))).
 
 def nmk :
   cts.Term
@@ -156,14 +181,23 @@ def nmk :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x =>
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
         cts.prod
           cts.star
           cts.star
           cts.star
           cts.I
-          (cts.prod cts.star cts.star cts.star cts.I x (x0 => False))
-          (x0 => Not x))).
+          (cts.prod cts.star cts.star cts.star cts.I x (x0:(cts.Term cts.star x) => False))
+          (x0:(cts.Term
+                 cts.star
+                 (cts.prod
+                    cts.star
+                    cts.star
+                    cts.star
+                    cts.I
+                    x
+                    (x0:(cts.Term cts.star x) => False))) =>
+           Not x))).
 
 def Not_ind :
   cts.Term
@@ -174,14 +208,14 @@ def Not_ind :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x =>
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x0 =>
+          (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
            cts.prod
              cts.star
              cts.star
@@ -192,9 +226,48 @@ def Not_ind :
                 cts.star
                 cts.star
                 cts.I
-                (cts.prod cts.star cts.star cts.star cts.I x (x1 => False))
-                (x1 => x0))
-             (x1 => cts.prod cts.star cts.star cts.star cts.I (Not x) (x2 => x0))))).
+                (cts.prod cts.star cts.star cts.star cts.I x (x1:(cts.Term cts.star x) => False))
+                (x1:(cts.Term
+                       cts.star
+                       (cts.prod
+                          cts.star
+                          cts.star
+                          cts.star
+                          cts.I
+                          x
+                          (x1:(cts.Term cts.star x) => False))) =>
+                 x0))
+             (x1:(cts.Term
+                    cts.star
+                    (cts.prod
+                       cts.star
+                       cts.star
+                       cts.star
+                       cts.I
+                       (cts.prod
+                          cts.star
+                          cts.star
+                          cts.star
+                          cts.I
+                          x
+                          (x1:(cts.Term cts.star x) => False))
+                       (x1:(cts.Term
+                              cts.star
+                              (cts.prod
+                                 cts.star
+                                 cts.star
+                                 cts.star
+                                 cts.I
+                                 x
+                                 (x1:(cts.Term cts.star x) => False))) =>
+                        x0))) =>
+              cts.prod
+                cts.star
+                cts.star
+                cts.star
+                cts.I
+                (Not x)
+                (x2:(cts.Term cts.star (Not x)) => x0))))).
 
 def conj :
   cts.Term
@@ -205,21 +278,22 @@ def conj :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x =>
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x0 =>
+          (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
            cts.prod
              cts.star
              cts.star
              cts.star
              cts.I
              x
-             (x1 => cts.prod cts.star cts.star cts.star cts.I x0 (x2 => And x x0))))).
+             (x1:(cts.Term cts.star x) =>
+              cts.prod cts.star cts.star cts.star cts.I x0 (x2:(cts.Term cts.star x0) => And x x0))))).
 
 def match_And_prop :
   cts.Term
@@ -230,21 +304,21 @@ def match_And_prop :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x =>
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x0 =>
+          (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
            cts.prod
              cts.box
              cts.star
              cts.star
              cts.I
              (cts.univ cts.star cts.box cts.I)
-             (x1 =>
+             (x1:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
               cts.prod
                 cts.star
                 cts.star
@@ -256,8 +330,37 @@ def match_And_prop :
                    cts.star
                    cts.I
                    x
-                   (x2 => cts.prod cts.star cts.star cts.star cts.I x0 (x3 => x1)))
-                (x2 => cts.prod cts.star cts.star cts.star cts.I (And x x0) (x3 => x1)))))).
+                   (x2:(cts.Term cts.star x) =>
+                    cts.prod
+                      cts.star
+                      cts.star
+                      cts.star
+                      cts.I
+                      x0
+                      (x3:(cts.Term cts.star x0) => x1)))
+                (x2:(cts.Term
+                       cts.star
+                       (cts.prod
+                          cts.star
+                          cts.star
+                          cts.star
+                          cts.I
+                          x
+                          (x2:(cts.Term cts.star x) =>
+                           cts.prod
+                             cts.star
+                             cts.star
+                             cts.star
+                             cts.I
+                             x0
+                             (x3:(cts.Term cts.star x0) => x1)))) =>
+                 cts.prod
+                   cts.star
+                   cts.star
+                   cts.star
+                   cts.I
+                   (And x x0)
+                   (x3:(cts.Term cts.star (And x x0)) => x1)))))).
 
 def or_introl :
   cts.Term
@@ -268,14 +371,15 @@ def or_introl :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x =>
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x0 => cts.prod cts.star cts.star cts.star cts.I x (x1 => Or x x0)))).
+          (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
+           cts.prod cts.star cts.star cts.star cts.I x (x1:(cts.Term cts.star x) => Or x x0)))).
 
 def or_intror :
   cts.Term
@@ -286,14 +390,15 @@ def or_intror :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x =>
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x0 => cts.prod cts.star cts.star cts.star cts.I x0 (x1 => Or x x0)))).
+          (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
+           cts.prod cts.star cts.star cts.star cts.I x0 (x1:(cts.Term cts.star x0) => Or x x0)))).
 
 def match_Or_prop :
   cts.Term
@@ -304,35 +409,64 @@ def match_Or_prop :
        cts.star
        cts.I
        (cts.univ cts.star cts.box cts.I)
-       (x =>
+       (x:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
           (cts.univ cts.star cts.box cts.I)
-          (x0 =>
+          (x0:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
            cts.prod
              cts.box
              cts.star
              cts.star
              cts.I
              (cts.univ cts.star cts.box cts.I)
-             (x1 =>
+             (x1:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
               cts.prod
                 cts.star
                 cts.star
                 cts.star
                 cts.I
-                (cts.prod cts.star cts.star cts.star cts.I x (x2 => x1))
-                (x2 =>
+                (cts.prod cts.star cts.star cts.star cts.I x (x2:(cts.Term cts.star x) => x1))
+                (x2:(cts.Term
+                       cts.star
+                       (cts.prod
+                          cts.star
+                          cts.star
+                          cts.star
+                          cts.I
+                          x
+                          (x2:(cts.Term cts.star x) => x1))) =>
                  cts.prod
                    cts.star
                    cts.star
                    cts.star
                    cts.I
-                   (cts.prod cts.star cts.star cts.star cts.I x0 (x3 => x1))
-                   (x3 => cts.prod cts.star cts.star cts.star cts.I (Or x x0) (x4 => x1))))))).
+                   (cts.prod
+                      cts.star
+                      cts.star
+                      cts.star
+                      cts.I
+                      x0
+                      (x3:(cts.Term cts.star x0) => x1))
+                   (x3:(cts.Term
+                          cts.star
+                          (cts.prod
+                             cts.star
+                             cts.star
+                             cts.star
+                             cts.I
+                             x0
+                             (x3:(cts.Term cts.star x0) => x1))) =>
+                    cts.prod
+                      cts.star
+                      cts.star
+                      cts.star
+                      cts.I
+                      (Or x x0)
+                      (x4:(cts.Term cts.star (Or x x0)) => x1))))))).
 
 def ex_intro :
   cts.Term
@@ -343,21 +477,42 @@ def ex_intro :
        cts.star
        cts.I
        (cts.univ cts.box cts.triangle cts.I)
-       (x =>
+       (x:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
-          (cts.prod cts.box cts.box cts.box cts.I x (x0 => cts.univ cts.star cts.box cts.I))
-          (x0 =>
+          (cts.prod
+             cts.box
+             cts.box
+             cts.box
+             cts.I
+             x
+             (x0:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))
+          (x0:(cts.Term
+                 cts.box
+                 (cts.prod
+                    cts.box
+                    cts.box
+                    cts.box
+                    cts.I
+                    x
+                    (x0:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))) =>
            cts.prod
              cts.box
              cts.star
              cts.star
              cts.I
              x
-             (x1 => cts.prod cts.star cts.star cts.star cts.I (x0 x1) (x2 => ex x x0))))).
+             (x1:(cts.Term cts.box x) =>
+              cts.prod
+                cts.star
+                cts.star
+                cts.star
+                cts.I
+                (x0 x1)
+                (x2:(cts.Term cts.star (x0 x1)) => ex x x0))))).
 
 def match_ex_prop :
   cts.Term
@@ -368,21 +523,35 @@ def match_ex_prop :
        cts.star
        cts.I
        (cts.univ cts.box cts.triangle cts.I)
-       (x =>
+       (x:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
-          (cts.prod cts.box cts.box cts.box cts.I x (x0 => cts.univ cts.star cts.box cts.I))
-          (x0 =>
+          (cts.prod
+             cts.box
+             cts.box
+             cts.box
+             cts.I
+             x
+             (x0:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))
+          (x0:(cts.Term
+                 cts.box
+                 (cts.prod
+                    cts.box
+                    cts.box
+                    cts.box
+                    cts.I
+                    x
+                    (x0:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))) =>
            cts.prod
              cts.box
              cts.star
              cts.star
              cts.I
              (cts.univ cts.star cts.box cts.I)
-             (x1 =>
+             (x1:(cts.Term cts.box (cts.univ cts.star cts.box cts.I)) =>
               cts.prod
                 cts.star
                 cts.star
@@ -394,8 +563,37 @@ def match_ex_prop :
                    cts.star
                    cts.I
                    x
-                   (x2 => cts.prod cts.star cts.star cts.star cts.I (x0 x2) (x3 => x1)))
-                (x2 => cts.prod cts.star cts.star cts.star cts.I (ex x x0) (x3 => x1)))))).
+                   (x2:(cts.Term cts.box x) =>
+                    cts.prod
+                      cts.star
+                      cts.star
+                      cts.star
+                      cts.I
+                      (x0 x2)
+                      (x3:(cts.Term cts.star (x0 x2)) => x1)))
+                (x2:(cts.Term
+                       cts.star
+                       (cts.prod
+                          cts.box
+                          cts.star
+                          cts.star
+                          cts.I
+                          x
+                          (x2:(cts.Term cts.box x) =>
+                           cts.prod
+                             cts.star
+                             cts.star
+                             cts.star
+                             cts.I
+                             (x0 x2)
+                             (x3:(cts.Term cts.star (x0 x2)) => x1)))) =>
+                 cts.prod
+                   cts.star
+                   cts.star
+                   cts.star
+                   cts.I
+                   (ex x x0)
+                   (x3:(cts.Term cts.star (ex x x0)) => x1)))))).
 
 def refl_equal :
   cts.Term
@@ -406,7 +604,8 @@ def refl_equal :
        cts.star
        cts.I
        (cts.univ cts.box cts.triangle cts.I)
-       (x => cts.prod cts.box cts.star cts.star cts.I x (x0 => equal x x0 x0))).
+       (x:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
+        cts.prod cts.box cts.star cts.star cts.I x (x0:(cts.Term cts.box x) => equal x x0 x0))).
 
 def equal_leibniz :
   cts.Term
@@ -417,28 +616,28 @@ def equal_leibniz :
        cts.star
        cts.I
        (cts.univ cts.box cts.triangle cts.I)
-       (x =>
+       (x:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
         cts.prod
           cts.box
           cts.star
           cts.star
           cts.I
           x
-          (x0 =>
+          (x0:(cts.Term cts.box x) =>
            cts.prod
              cts.box
              cts.star
              cts.star
              cts.I
              x
-             (x1 =>
+             (x1:(cts.Term cts.box x) =>
               cts.prod
                 cts.star
                 cts.star
                 cts.star
                 cts.I
                 (equal x x0 x1)
-                (x2 =>
+                (x2:(cts.Term cts.star (equal x x0 x1)) =>
                  cts.prod
                    cts.box
                    cts.star
@@ -450,6 +649,21 @@ def equal_leibniz :
                       cts.box
                       cts.I
                       x
-                      (x3 => cts.univ cts.star cts.box cts.I))
-                   (x3 => cts.prod cts.star cts.star cts.star cts.I (x3 x0) (x4 => x3 x1))))))).
+                      (x3:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))
+                   (x3:(cts.Term
+                          cts.box
+                          (cts.prod
+                             cts.box
+                             cts.box
+                             cts.box
+                             cts.I
+                             x
+                             (x3:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))) =>
+                    cts.prod
+                      cts.star
+                      cts.star
+                      cts.star
+                      cts.I
+                      (x3 x0)
+                      (x4:(cts.Term cts.star (x3 x0)) => x3 x1))))))).
 
