@@ -8,48 +8,43 @@ let curmid = ref (B.mk_mident "")
 
 module P = Pp.Make (struct let get_name () = !curmid end)
 
-let files = ["cts.dk"]
+(** Files to setup [Env.t] *)
 
-let test env =
-  curmid := B.mk_mident "testfile";
-  let newid = fun id -> B.mk_ident @@ (B.string_of_ident id)^"_p" in
-  let entry = List.hd @@ Parser.(parse @@ input_from_file "testfile.dk") in
-  match entry with
-  | Entry.Def (l,id,sc,opq,_,te) ->
-    begin
-      let te = Vars.add_vars @@ te in
-      let (te',args) = Poly.gen_poly env false te in
-      Format.(eprintf "[] %s --> %s %a.\n" 
-        (B.string_of_ident id) 
-        (B.string_of_ident @@ newid id)
-        (pp_print_list ~pp_sep:pp_print_space T.pp_term)
-        args);
-      P.print_entry Format.std_formatter @@
-        Entry.Def (l,newid id,sc,opq,None,te')
-    end
-  | Entry.Decl (l,id,sc,st,t) ->
-    begin
-      let t = Vars.add_vars t in
-      let (t',args) = Poly.gen_poly env true t in
-      Format.(eprintf "[] %s --> %s %a.\n" 
-        (B.string_of_ident id) 
-        (B.string_of_ident @@ newid id)
-        (pp_print_list ~pp_sep:pp_print_space T.pp_term)
-        args);
-      P.print_entry Format.std_formatter @@
-        Entry.Decl (l,newid id,sc,st,t')
-    end
-  | _ -> failwith "unexpected entry"
+(** Polymorphic definitions are generated from these files *)
+let poly_file = ref "tests/testfile.dk"
+
+let build env =
+  curmid := B.mk_mident (
+    let _ = Str.(search_forward (regexp "[^/]*.dk$") !poly_file 0) in
+    let s = Str.matched_string !poly_file in
+    Str.first_chars s ((String.length s) - 3)
+  );
+  (* let newid = fun id -> B.mk_ident @@ (B.string_of_ident id)^"_p" in *)
+  let rule_fmt = Format.err_formatter in
+  let entry_fmt = Format.std_formatter in
+  let entries = Parser.(parse @@ input_from_file !poly_file) in
+  List.iter (fun entry ->
+    let entry = Procfile.build_entry env rule_fmt entry in
+    P.print_entry entry_fmt entry) entries
 
 let _ =
+  Files.add_path "theory";
+  let usage_msg = "Usage " ^ Sys.argv.(0) ^ "[OPTION]... [FILES]..." in
+  let speclist = [
+    ("-I", Arg.String Files.add_path, "Add to include path");
+    ("-w", Arg.String (fun s -> 
+        Procfile.(whitelist := (B.mk_ident s) :: !whitelist)), 
+      "Whitelist identifier");
+  ] in
+  Arg.parse speclist (fun s -> poly_file := s) usage_msg;
   let hook_after env exn =
     match exn with
     | Some (env, lc, e) -> Env.fail_env_error env lc e
-    | None -> test env
+    | None -> build env
   in
   let hook = 
     Processor.{
       before = (fun _ -> Kernel.Confluence.initialize ());
       after = hook_after} 
   in
-  Processor.handle_files files ~hook Processor.TypeChecker
+  Processor.handle_files [!poly_file] ~hook Processor.TypeChecker

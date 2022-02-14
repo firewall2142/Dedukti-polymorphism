@@ -1,1 +1,2 @@
-Run `dune exec ./main.exe`
+Rune `dune exec ./main.exe`
+
