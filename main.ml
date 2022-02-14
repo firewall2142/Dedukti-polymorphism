@@ -15,7 +15,7 @@ let poly_file = ref "tests/testfile.dk"
 let rule_file = ref "/tmp/rules.dk"
 let cts_file = "theory/cts.dk"
 
-let build rule_fmt entry_fmt env =
+let run rule_fmt entry_fmt env =
   curmid := B.mk_mident (
     let _ = Str.(search_forward (regexp "[^/]*.dk$") !poly_file 0) in
     let s = Str.matched_string !poly_file in
@@ -44,7 +44,7 @@ let build rule_fmt entry_fmt env =
     entries
 
 let _ =
-  
+  (* Add theory to file paths *)
   Files.add_path "theory";
 
   let usage_msg = "Usage " ^ Sys.argv.(0) ^ "[OPTION]... [FILES]..." in
@@ -61,6 +61,6 @@ let _ =
   try
     let rule_fmt = Format.formatter_of_out_channel rule_oc in
     let entry_fmt = Format.std_formatter in
-    build rule_fmt entry_fmt env;
+    run rule_fmt entry_fmt env;
     close_out rule_oc
   with e -> close_out_noerr rule_oc; raise e

@@ -138,17 +138,17 @@ let add_lambdas utlist te =
   in
   aux utlist
 
-(* 
-gen_poly env te
-cstrs = generate constraints
-dsu = generate dsu from cstrs
-// replace elements in [te] with their parent
-get a list of representative elements [ui]
-  zip it with its type i.e. utlist = [(ui, ti)]
-generate dependencies of utlist i.e. 
+(**
+STEPS in gen_poly:
+- cstrs <-- generate constraints by type checking te
+- dsu <-- generate dsu from cstrs
+- ulist <-- get a list of representative elements [ui]
+- utlist <--  zip it with its type i.e. utlist = [(ui, ti)]
+- generate dependencies of utlist i.e. 
   utdep = [(i,[d1; d2; ...])] : (int * int list) list
-topological sort the list w.r.t dependencies
-create quantification from the list
+  Here variable are mapped to ints (?_u32, ?_t32 will be is mapped to 32)
+- var_order = topological sort the list w.r.t dependencies
+- create quantification from the list (use lambda or pi depending on variable [use_pi])
 *)
 let gen_poly env use_pi te =
   C.global_cstr := {cstrs=[]};

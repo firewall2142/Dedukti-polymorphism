@@ -27,6 +27,8 @@ let poly_app_term mid ident args =
   | [] -> f
   | x :: tl -> T.mk_App f x tl
 
+(** [preprocess te] substitutes any occurence of term [u] to term [v]
+    in [te]. this is done of for all [(u,v)] in [te_map] *)
 let rec preprocess te = let open T in match te with
 | Const _ ->
   Option.value ~default:te
@@ -43,10 +45,11 @@ let rec preprocess te = let open T in match te with
     T.mk_Pi l id (preprocess a) (preprocess b)
 | Kind | Type _ | DB _ -> te
 
-(** [build_entry env fmt entry] Builds new entry from the given entry
-    performing [preprocess] on the terms inside it. Also prints the
-    corresponding rule to fmt. Also return true if the new entry's ident
-    is the same as the previous one's *)
+(** [build_entry env rule_fmt entry] Builds a list of entries from the given entry
+    performing [preprocess] on the terms inside it. 
+    There are two entries ( polymorphic and non-polymorphic) in the result if the
+    identifier is whitelisted otherwise there is only one entry (non-polymorphic).
+    Also prints the corresponding rule to rule_fmt. *)
 let build_entry env rule_fmt entry =
   let newid = fun id -> B.mk_ident @@ (B.string_of_ident id)^"_p" in
   let mid = Env.get_name env in
@@ -54,7 +57,7 @@ let build_entry env rule_fmt entry =
   | E.Def (l,id,sc,opq,_,te) ->
     let te = preprocess te in
     let ty = C.Typing.infer (Env.get_signature env) [] te in
-    let entries = [E.Def (l,id,sc,opq,Some ty,te)] in
+    let entries = [E.Def (l,id,sc,opq,Some ty,te)] in (* Initialize list with non polymorphic form of entry*)
     let entries = 
       begin
         if List.exists (B.ident_eq id) !whitelist then 
@@ -75,7 +78,7 @@ let build_entry env rule_fmt entry =
     entries
   | E.Decl (l,id,sc,_,t) ->
     let st = Kernel.Signature.Definable T.Free in
-    let entries = [E.Decl (l,id,sc,st,t)] in
+    let entries = [E.Decl (l,id,sc,st,t)] in (* Initialize list with non polymorphic form of entry*)
     begin
       let t = preprocess t in
       if List.exists (B.ident_eq id) !whitelist then 
