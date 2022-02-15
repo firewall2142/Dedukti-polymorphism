@@ -127,6 +127,57 @@ def ex :
                        (x0:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))) =>
               cts.univ cts.star cts.box cts.I)))).
 
+def equal_p :
+  ?_u2:cts.Sort ->
+  ?_u4:cts.Sort ->
+  ?_u17:cts.Sort ->
+  ?_u30:cts.Sort ->
+  ?_u7:cts.Sort ->
+  ?_u12:cts.Sort ->
+  ?_u15:cts.Sort ->
+  ?_u20:cts.Sort ->
+  ?_u24:cts.Sort ->
+  ?_u27:cts.Sort ->
+  ?_u29:cts.Sort ->
+  ?_u28:(cts.eps (cts.Axiom ?_u29 ?_u27)) ->
+  ?_u25:(cts.eps (cts.Rule ?_u30 ?_u27 ?_u24)) ->
+  ?_u21:(cts.eps (cts.Rule ?_u30 ?_u24 ?_u20)) ->
+  ?_u16:(cts.eps (cts.Axiom ?_u17 ?_u15)) ->
+  ?_u13:(cts.eps (cts.Axiom ?_u20 ?_u12)) ->
+  ?_u8:(cts.eps (cts.Axiom ?_u30 ?_u7)) ->
+  ?_u5:(cts.eps (cts.Axiom ?_u30 ?_u4)) ->
+  ?_u3:(cts.eps (cts.Rule ?_u4 ?_u17 ?_u2)) ->
+  ?_u18:(cts.eps (cts.SubType ?_u12 ?_u15 (cts.univ ?_u20 ?_u12 ?_u13) (cts.univ ?_u17 ?_u15 ?_u16))) ->
+  cts.Term
+    ?_u2
+    (cts.prod
+       ?_u4
+       ?_u17
+       ?_u2
+       ?_u3
+       (cts.univ ?_u30 ?_u4 ?_u5)
+       (x:(cts.Term ?_u7 (cts.univ ?_u30 ?_u7 ?_u8)) =>
+        cts.cast
+          ?_u12
+          ?_u15
+          (cts.univ ?_u20 ?_u12 ?_u13)
+          (cts.univ ?_u17 ?_u15 ?_u16)
+          ?_u18
+          (cts.prod
+             ?_u30
+             ?_u24
+             ?_u20
+             ?_u21
+             x
+             (x0:(cts.Term ?_u30 x) =>
+              cts.prod
+                ?_u30
+                ?_u27
+                ?_u24
+                ?_u25
+                x
+                (x1:(cts.Term ?_u30 x) => cts.univ ?_u29 ?_u27 ?_u28))))).
+
 def equal :
   cts.Term
     cts.diamond
@@ -159,6 +210,27 @@ def equal :
                 (x1:(cts.Term cts.box x) => cts.univ cts.star cts.box cts.I))))).
 
 def I : cts.Term cts.star True.
+
+def falsity_p :
+  ?_u36:cts.Sort ->
+  ?_u38:cts.Sort ->
+  ?_u46:cts.Sort ->
+  ?_u40:cts.Sort ->
+  ?_u41:cts.Sort ->
+  ?_u47:(cts.eps (cts.Rule cts.star ?_u40 ?_u46)) ->
+  ?_u42:(cts.eps (cts.Axiom ?_u40 ?_u41)) ->
+  ?_u39:(cts.eps (cts.Axiom ?_u40 ?_u38)) ->
+  ?_u37:(cts.eps (cts.Rule ?_u38 ?_u46 ?_u36)) ->
+  cts.Term
+    ?_u36
+    (cts.prod
+       ?_u38
+       ?_u46
+       ?_u36
+       ?_u37
+       (cts.univ ?_u40 ?_u38 ?_u39)
+       (x:(cts.Term ?_u41 (cts.univ ?_u40 ?_u41 ?_u42)) =>
+        cts.prod cts.star ?_u40 ?_u46 ?_u47 False (x0:(cts.Term cts.star False) => x))).
 
 def falsity :
   cts.Term
@@ -595,6 +667,76 @@ def match_ex_prop :
                    (ex x x0)
                    (x3:(cts.Term cts.star (ex x x0)) => x1)))))).
 
+def refl_equal_p :
+  ?_u53:cts.Sort ->
+  ?_u55:cts.Sort ->
+  ?_u63:cts.Sort ->
+  ?_u86:cts.Sort ->
+  ?_u58:cts.Sort ->
+  ?_u75:cts.Sort ->
+  ?_u85:cts.Sort ->
+  ?_u66:cts.Sort ->
+  ?_u67:cts.Sort ->
+  ?_u69:cts.Sort ->
+  ?_u70:cts.Sort ->
+  ?_u71:cts.Sort ->
+  ?_u72:cts.Sort ->
+  ?_u73:cts.Sort ->
+  ?_u74:cts.Sort ->
+  ?_u83:(cts.eps (cts.Rule ?_u66 ?_u67 ?_u85)) ->
+  ?_u82:(cts.eps (cts.Axiom ?_u86 ?_u66)) ->
+  ?_u81:(cts.eps (cts.Axiom ?_u86 ?_u69)) ->
+  ?_u80:(cts.eps (cts.Axiom ?_u72 ?_u70)) ->
+  ?_u79:(cts.eps (cts.Axiom ?_u67 ?_u71)) ->
+  ?_u78:(cts.eps (cts.Rule ?_u86 ?_u73 ?_u72)) ->
+  ?_u77:(cts.eps (cts.Rule ?_u86 ?_u74 ?_u73)) ->
+  ?_u76:(cts.eps (cts.Axiom ?_u75 ?_u74)) ->
+  ?_u64:(cts.eps (cts.Rule ?_u86 ?_u75 ?_u63)) ->
+  ?_u59:(cts.eps (cts.Axiom ?_u86 ?_u58)) ->
+  ?_u56:(cts.eps (cts.Axiom ?_u86 ?_u55)) ->
+  ?_u54:(cts.eps (cts.Rule ?_u55 ?_u63 ?_u53)) ->
+  ?_u84:(cts.eps (cts.SubType ?_u70 ?_u71 (cts.univ ?_u72 ?_u70 ?_u80) (cts.univ ?_u67 ?_u71 ?_u79))) ->
+  cts.Term
+    ?_u53
+    (cts.prod
+       ?_u55
+       ?_u63
+       ?_u53
+       ?_u54
+       (cts.univ ?_u86 ?_u55 ?_u56)
+       (x:(cts.Term ?_u58 (cts.univ ?_u86 ?_u58 ?_u59)) =>
+        cts.prod
+          ?_u86
+          ?_u75
+          ?_u63
+          ?_u64
+          x
+          (x0:(cts.Term ?_u86 x) =>
+           equal_p
+             ?_u85
+             ?_u66
+             ?_u67
+             ?_u86
+             ?_u69
+             ?_u70
+             ?_u71
+             ?_u72
+             ?_u73
+             ?_u74
+             ?_u75
+             ?_u76
+             ?_u77
+             ?_u78
+             ?_u79
+             ?_u80
+             ?_u81
+             ?_u82
+             ?_u83
+             ?_u84
+             x
+             x0
+             x0))).
+
 def refl_equal :
   cts.Term
     cts.star
@@ -605,7 +747,191 @@ def refl_equal :
        cts.I
        (cts.univ cts.box cts.triangle cts.I)
        (x:(cts.Term cts.triangle (cts.univ cts.box cts.triangle cts.I)) =>
-        cts.prod cts.box cts.star cts.star cts.I x (x0:(cts.Term cts.box x) => equal x x0 x0))).
+        cts.prod
+          cts.box
+          cts.star
+          cts.star
+          cts.I
+          x
+          (x0:(cts.Term cts.box x) =>
+           equal_p
+             cts.diamond
+             cts.triangle
+             cts.diamond
+             cts.box
+             cts.triangle
+             cts.triangle
+             cts.sinf
+             cts.box
+             cts.box
+             cts.box
+             cts.star
+             cts.I
+             cts.I
+             cts.I
+             cts.I
+             cts.I
+             cts.I
+             cts.I
+             cts.I
+             cts.I
+             x
+             x0
+             x0))).
+
+def equal_leibniz_p :
+  ?_u90:cts.Sort ->
+  ?_u92:cts.Sort ->
+  ?_u100:cts.Sort ->
+  ?_u178:cts.Sort ->
+  ?_u95:cts.Sort ->
+  ?_u104:cts.Sort ->
+  ?_u108:cts.Sort ->
+  ?_u119:cts.Sort ->
+  ?_u152:cts.Sort ->
+  ?_u129:cts.Sort ->
+  ?_u110:cts.Sort ->
+  ?_u111:cts.Sort ->
+  ?_u113:cts.Sort ->
+  ?_u114:cts.Sort ->
+  ?_u115:cts.Sort ->
+  ?_u116:cts.Sort ->
+  ?_u117:cts.Sort ->
+  ?_u118:cts.Sort ->
+  ?_u155:cts.Sort ->
+  ?_u172:cts.Sort ->
+  ?_u158:cts.Sort ->
+  ?_u160:cts.Sort ->
+  ?_u163:cts.Sort ->
+  ?_u166:cts.Sort ->
+  ?_u173:(cts.eps (cts.Rule ?_u160 ?_u160 ?_u172)) ->
+  ?_u167:(cts.eps (cts.Axiom ?_u160 ?_u166)) ->
+  ?_u164:(cts.eps (cts.Rule ?_u178 ?_u166 ?_u163)) ->
+  ?_u159:(cts.eps (cts.Axiom ?_u160 ?_u158)) ->
+  ?_u156:(cts.eps (cts.Rule ?_u178 ?_u158 ?_u155)) ->
+  ?_u153:(cts.eps (cts.Rule ?_u155 ?_u172 ?_u152)) ->
+  ?_u127:(cts.eps (cts.Rule ?_u110 ?_u111 ?_u129)) ->
+  ?_u126:(cts.eps (cts.Axiom ?_u178 ?_u110)) ->
+  ?_u125:(cts.eps (cts.Axiom ?_u178 ?_u113)) ->
+  ?_u124:(cts.eps (cts.Axiom ?_u116 ?_u114)) ->
+  ?_u123:(cts.eps (cts.Axiom ?_u111 ?_u115)) ->
+  ?_u122:(cts.eps (cts.Rule ?_u178 ?_u117 ?_u116)) ->
+  ?_u121:(cts.eps (cts.Rule ?_u178 ?_u118 ?_u117)) ->
+  ?_u120:(cts.eps (cts.Axiom ?_u119 ?_u118)) ->
+  ?_u109:(cts.eps (cts.Rule ?_u119 ?_u152 ?_u108)) ->
+  ?_u105:(cts.eps (cts.Rule ?_u178 ?_u108 ?_u104)) ->
+  ?_u101:(cts.eps (cts.Rule ?_u178 ?_u104 ?_u100)) ->
+  ?_u96:(cts.eps (cts.Axiom ?_u178 ?_u95)) ->
+  ?_u93:(cts.eps (cts.Axiom ?_u178 ?_u92)) ->
+  ?_u91:(cts.eps (cts.Rule ?_u92 ?_u100 ?_u90)) ->
+  ?_u128:(cts.eps
+            (cts.SubType ?_u114 ?_u115 (cts.univ ?_u116 ?_u114 ?_u124) (cts.univ ?_u111 ?_u115 ?_u123))) ->
+  cts.Term
+    ?_u90
+    (cts.prod
+       ?_u92
+       ?_u100
+       ?_u90
+       ?_u91
+       (cts.univ ?_u178 ?_u92 ?_u93)
+       (x:(cts.Term ?_u95 (cts.univ ?_u178 ?_u95 ?_u96)) =>
+        cts.prod
+          ?_u178
+          ?_u104
+          ?_u100
+          ?_u101
+          x
+          (x0:(cts.Term ?_u178 x) =>
+           cts.prod
+             ?_u178
+             ?_u108
+             ?_u104
+             ?_u105
+             x
+             (x1:(cts.Term ?_u178 x) =>
+              cts.prod
+                ?_u119
+                ?_u152
+                ?_u108
+                ?_u109
+                (equal_p
+                   ?_u129
+                   ?_u110
+                   ?_u111
+                   ?_u178
+                   ?_u113
+                   ?_u114
+                   ?_u115
+                   ?_u116
+                   ?_u117
+                   ?_u118
+                   ?_u119
+                   ?_u120
+                   ?_u121
+                   ?_u122
+                   ?_u123
+                   ?_u124
+                   ?_u125
+                   ?_u126
+                   ?_u127
+                   ?_u128
+                   x
+                   x0
+                   x1)
+                (x2:(cts.Term
+                       ?_u119
+                       (equal_p
+                          ?_u129
+                          ?_u110
+                          ?_u111
+                          ?_u178
+                          ?_u113
+                          ?_u114
+                          ?_u115
+                          ?_u116
+                          ?_u117
+                          ?_u118
+                          ?_u119
+                          ?_u120
+                          ?_u121
+                          ?_u122
+                          ?_u123
+                          ?_u124
+                          ?_u125
+                          ?_u126
+                          ?_u127
+                          ?_u128
+                          x
+                          x0
+                          x1)) =>
+                 cts.prod
+                   ?_u155
+                   ?_u172
+                   ?_u152
+                   ?_u153
+                   (cts.prod
+                      ?_u178
+                      ?_u158
+                      ?_u155
+                      ?_u156
+                      x
+                      (x3:(cts.Term ?_u178 x) => cts.univ ?_u160 ?_u158 ?_u159))
+                   (x3:(cts.Term
+                          ?_u163
+                          (cts.prod
+                             ?_u178
+                             ?_u166
+                             ?_u163
+                             ?_u164
+                             x
+                             (x3:(cts.Term ?_u178 x) => cts.univ ?_u160 ?_u166 ?_u167))) =>
+                    cts.prod
+                      ?_u160
+                      ?_u160
+                      ?_u172
+                      ?_u173
+                      (x3 x0)
+                      (x4:(cts.Term ?_u160 (x3 x0)) => x3 x1))))))).
 
 def equal_leibniz :
   cts.Term
@@ -636,8 +962,56 @@ def equal_leibniz :
                 cts.star
                 cts.star
                 cts.I
-                (equal x x0 x1)
-                (x2:(cts.Term cts.star (equal x x0 x1)) =>
+                (equal_p
+                   cts.diamond
+                   cts.triangle
+                   cts.diamond
+                   cts.box
+                   cts.triangle
+                   cts.triangle
+                   cts.sinf
+                   cts.box
+                   cts.box
+                   cts.box
+                   cts.star
+                   cts.I
+                   cts.I
+                   cts.I
+                   cts.I
+                   cts.I
+                   cts.I
+                   cts.I
+                   cts.I
+                   cts.I
+                   x
+                   x0
+                   x1)
+                (x2:(cts.Term
+                       cts.star
+                       (equal_p
+                          cts.diamond
+                          cts.triangle
+                          cts.diamond
+                          cts.box
+                          cts.triangle
+                          cts.triangle
+                          cts.sinf
+                          cts.box
+                          cts.box
+                          cts.box
+                          cts.star
+                          cts.I
+                          cts.I
+                          cts.I
+                          cts.I
+                          cts.I
+                          cts.I
+                          cts.I
+                          cts.I
+                          cts.I
+                          x
+                          x0
+                          x1)) =>
                  cts.prod
                    cts.box
                    cts.star
