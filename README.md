@@ -1,3 +1,4 @@
+0. Convert library files with [DeduktiFLE](https://github.com/firewall2142/DeduktiFLE/)
 1. Place library files in `ctslib/`
 2. Add definitions to add polymorphism to in `whitelist.txt`
 3. Do `./run.sh`
